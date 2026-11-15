@@ -102,7 +102,7 @@ val_dicts = df_val.to_dict(orient='records')
 X_train = reg_vectorizer.fit_transform(train_dicts)
 X_val = reg_vectorizer.transform(val_dicts)
 
-reg_model = LinearRegression()
+reg_model = RandomForestRegressor()
 reg_model.fit(X_train, y_train)
 
 y_pred = reg_model.predict(X_val)
