@@ -45,7 +45,6 @@ To re-train both models from scratch and generate the serialized artifact (`mode
 python train.py
 
 ```
-
 ---
 
 ## 6. Dependency & Environment Management
@@ -90,7 +89,7 @@ docker build -t startup-predictor .
 ### Run the Docker Container
 
 ```bash
-docker run -it --rm -p 8088:8088 startup-predictor
+docker run -it -p 8088:8088 startup-predictor
 
 ```
 ### Send a Request 
@@ -122,7 +121,7 @@ curl -X POST "http://127.0.0.1:8088/predict" \
 
 ## 8. Model Deployment & Usage
 
-### Option A: Deploying on PythonAnywhere (Free Tier, No Docker/Credit Card Required)
+### Option A: Deploying on PythonAnywhere 
 
 Because PythonAnywhere does not support Docker and runs from a system root directory (`/var/www/`), absolute path resolution is implemented in `predict.py` to seamlessly load `models.bin`.
 
@@ -130,23 +129,19 @@ Because PythonAnywhere does not support Docker and runs from a system root direc
 2. **Create a Flask Web App** via the **Web** tab (choose Python 3.x and Flask).
 3. **Upload Files:** Upload `predict.py` and `models.bin` into your project directory (e.g., `/home/yourusername/mysite/`).
 4. **Configure Absolute Paths in `predict.py`:** Ensure your model loader uses absolute paths:
+    ```python
+      import os
 
-```python
-import os
+      current_dir = os.path.dirname(os.path.abspath(__file__))
+      model_path = os.path.join(current_dir, 'models.bin')
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.join(current_dir, 'models.bin')
+      with open(model_path, 'rb') as f_in:
+        class_vectorizer, class_model, reg_vectorizer, reg_model = pickle.load(
+            f_in
+        )
 
-with open(model_path, 'rb') as f_in:
-  class_vectorizer, class_model, reg_vectorizer, reg_model = pickle.load(
-      f_in
-  )
+      ```
 
-```
-
-
-
-```
 5. **Configure WSGI File:** In the PythonAnywhere **Web** tab, update your WSGI configuration file:
    ```python
    import sys
@@ -157,7 +152,7 @@ with open(model_path, 'rb') as f_in:
 
    from predict import app as application
 
-```
+
 
 6. **Install Packages & Reload:** Open a Bash console and install dependencies if needed (`pip install --user scikit-learn pandas numpy flask`), then click the green **Reload** button on your PythonAnywhere Web dashboard.
 
@@ -168,7 +163,7 @@ with open(model_path, 'rb') as f_in:
 Send a `POST` request to your live endpoint:
 
 ```bash
-curl -X POST "[https://wadiej.pythonanywhere.com/predict](https://wadiej.pythonanywhere.com/predict)" \
+curl -X POST "https://wadiej.pythonanywhere.com/predict" \
      -H "Content-Type: application/json" \
      -d '{
         "sector": "Information",
@@ -200,4 +195,3 @@ curl -X POST "[https://wadiej.pythonanywhere.com/predict](https://wadiej.pythona
 
 ```
 
-```

@@ -22,6 +22,8 @@ df = pd.read_csv(data)
 df.columns =  df.columns.str.lower().str.replace(' ','_')
 df.head()
 
+# Data Preparation
+
 
 def clean_how_much_they_raised(text):
     number = pd.to_numeric(re.sub(r'[^\d.]','', str(text)), errors='coerce')
@@ -62,6 +64,7 @@ categorical = ['sector','giants',
 numerical = ['years_of_operation', 'total_funding']
 
 ## Classification
+print("Start Classification model training")
 
 class_features = ['sector','competition', 'giants' ,'niche_limits' ,'monetization_failure', 'execution_flaws', 'acquisition_stagnation', 'years_of_operation']
 classj_y = df.poor_market_fit
@@ -82,10 +85,10 @@ X_val = class_vectorizer.transform(val_dicts)
 class_model = LogisticRegression(C=10, max_iter=200)
 class_model.fit(X_train, y_train)
 
-y_pred = class_model.predict_proba(X_val)[:,1]
 
-print(roc_auc_score(y_val, y_pred))
 ## Regression 
+print("Start Regression model training")
+
 
 reg_features = ['sector','competition', 'giants' ,'niche_limits' ,'monetization_failure', 'execution_flaws', 'acquisition_stagnation', 'years_of_operation']
 reg_y = df.total_funding
